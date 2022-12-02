@@ -5,9 +5,19 @@ public class Credentials {
     private String password;
     private String accountType; // standard - premium
     private String country;
-    private int balance;
-    private int token;
+    private String balance;
+   // private int token;
    // private ArrayList<Movie> movies;
+
+    public Credentials() {
+    }
+    public Credentials(Credentials credentials) {
+        this.name = credentials.name;
+        this.password = credentials.password;
+        this.accountType = credentials.accountType;
+        this.country = credentials.country;
+        this.balance = credentials.balance;
+    }
 
 
     public String getName() {
@@ -42,19 +52,11 @@ public class Credentials {
         this.country = country;
     }
 
-    public int getBalance() {
+    public String getBalance() {
         return balance;
     }
 
-    public void setBalance(final int balance) {
+    public void setBalance(final String balance) {
         this.balance = balance;
-    }
-
-    public int getToken() {
-        return token;
-    }
-
-    public void setToken(final int token) {
-        this.token = token;
     }
 }
