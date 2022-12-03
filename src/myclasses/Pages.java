@@ -7,6 +7,7 @@ public class Pages {
     private boolean homepageLogged;
     private boolean movies;
     private boolean upgrades;
+    private boolean seeDetails;
 
     public Pages() {
         homepageLoggedOut = true;
@@ -24,6 +25,7 @@ public class Pages {
         homepageLogged = false;
         movies = false;
         upgrades = false;
+        seeDetails = false;
     }
 
     public void changePageLogin() {
@@ -45,6 +47,16 @@ public class Pages {
         changePage();
         currentUserIdx = idx;
         homepageLogged = true;
+    }
+
+    public void changePageMovies() {
+        changePage();
+        movies = true;
+    }
+
+    public void changePageSeeDetails() {
+        changePage();
+        seeDetails = true;
     }
 
     public int getCurrentUserIdx() {
@@ -101,5 +113,13 @@ public class Pages {
 
     public void setUpgrades(final boolean upgrades) {
         this.upgrades = upgrades;
+    }
+
+    public boolean isSeeDetails() {
+        return seeDetails;
+    }
+
+    public void setSeeDetails(final boolean seeDetails) {
+        this.seeDetails = seeDetails;
     }
 }

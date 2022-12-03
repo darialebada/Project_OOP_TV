@@ -5,12 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.Action;
+import fileio.FilterInput;
 import fileio.Movie;
 import fileio.User;
 import utils.Errors;
 
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
+import java.util.Collections;
+import java.util.Comparator;
+
+import static java.util.Comparator.comparing;
 
 public final class Debug {
     private Pages page;
@@ -20,8 +24,6 @@ public final class Debug {
     private String err = null;
     public void debug(final ArrayList<User> usersList, final ArrayList<Movie> moviesList,
                       final ArrayList<Action> actions, final ArrayNode output) {
-        //ChangePage pg = new ChangePage();
-        //OnPage pgOn = new OnPage();
         users = new ArrayList<>(usersList);
         movies = new ArrayList<>(moviesList);
         page =  new Pages();
@@ -51,6 +53,23 @@ public final class Debug {
             case "logout" -> {
                 page.changePageHomepageLoggedOut();
             }
+            case "movies" -> {
+                if (page.isHomepageLogged()) {
+                    page.changePageMovies();
+
+                    ArrayList<Movie> mov = new ArrayList<>();
+                    for (Movie movie : movies) {
+                        if (!movie.getCountriesBanned().contains(users.get(page.getCurrentUserIdx()).getCredentials().getCountry())) {
+                            mov.add(movie);
+                        }
+                    }
+                    printUser(mov, output);
+                }
+            }
+            case "see details" -> {
+                if (page.isMovies())
+                    seeDetails(action.getMovie(), output);
+            }
         }
     }
 
@@ -67,6 +86,18 @@ public final class Debug {
             case "register" -> {
                 register(action, output);
             }
+            case "search" -> {
+                if (page.isMovies()) {
+                    printSearchMovies(action.getStartsWith(), output);
+                }
+            }
+            case "filter" -> {
+                if (page.isMovies()) {
+                    filter(action.getFilters(), output);
+                } else {
+                    err.loginErr(output, currentMovieList);
+                }
+            }
         }
     }
 
@@ -75,7 +106,7 @@ public final class Debug {
             if (users.get(i).getCredentials().getName().equals(action.getCredentials().getName()) &&
                 users.get(i).getCredentials().getPassword().equals(action.getCredentials().getPassword())) {
                     page.changePageHomepageLogged(i);
-                    printUser(users.get(i), output);
+                    printUser(currentMovieList, output);
                     return;
             }
         }
@@ -95,18 +126,90 @@ public final class Debug {
         }
         User newUser = new User(action.getCredentials());
         users.add(newUser);
-        printUser(newUser, output);
         page.changePageHomepageLogged(users.size() - 1);
+        printUser(currentMovieList, output);
     }
 
-    public void printUser(final User user, final ArrayNode output) {
+    public void printUser(final ArrayList<Movie> movieList, final ArrayNode output) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode node = objectMapper.createObjectNode();
         node.put("error", err);
-        //node.set("currentMoviesList", objectMapper.convertValue(currentMovieList, JsonNode.class));
-        node.putPOJO("currentMoviesList", currentMovieList);
-        node.set("currentUser", objectMapper.convertValue(user, JsonNode.class));
+        node.set("currentMoviesList", objectMapper.convertValue(movieList, JsonNode.class));
+        //node.putPOJO("currentMoviesList", movieList);
+        node.set("currentUser", objectMapper.convertValue(users.get(page.getCurrentUserIdx()), JsonNode.class));
         output.add(node);
+    }
+
+    public void printSearchMovies(final String startsWith, final ArrayNode output) {
+        ArrayList<Movie> searchMovieList = new ArrayList<>();
+        for (Movie movie : movies) {
+            if (movie.getName().contains(startsWith)) {
+                searchMovieList.add(movie);
+            }
+        }
+        printUser(searchMovieList, output);
+    }
+
+    public void filter(final FilterInput filter, final ArrayNode output) {
+        ArrayList<Movie> filteredMovieList = new ArrayList<>();
+        if (filter.getContains() == null) {
+            for (Movie movie : movies) {
+                if (!movie.getCountriesBanned().contains(users.get(page.getCurrentUserIdx()).getCredentials().getCountry())) {
+                    filteredMovieList.add(movie);
+                }
+            }
+            //TODO: MODIFY
+            switch (filter.getSort().getDuration()) {
+                case "decreasing" -> {
+                    filteredMovieList.sort(new Comparator<Movie>() {
+                        @Override
+                        public int compare(Movie o1, Movie o2) {
+                            if (o1.getDuration() > o2.getDuration())
+                                return -1;
+                            else if (o1.getDuration() < o2.getDuration())
+                                return 1;
+                            else if (o1.getRating() > o2.getRating())
+                                return -1;
+                            else if (o1.getRating() < o2.getRating())
+                                return 1;
+                            return 0;
+                        }
+                    });
+                }
+                case "increasing" -> {
+                    filteredMovieList.sort(new Comparator<Movie>() {
+                        @Override
+                        public int compare(Movie o1, Movie o2) {
+                            if (o1.getDuration() < o2.getDuration())
+                                return -1;
+                            else if (o1.getDuration() > o2.getDuration())
+                                return 1;
+                            else if (o1.getRating() < o2.getRating())
+                                return -1;
+                            else if (o1.getRating() > o2.getRating())
+                                return 1;
+                            return 0;
+                        }
+                    });
+                }
+            }
+            printUser(filteredMovieList, output);
+        }
+    }
+
+    public void seeDetails(final String movieName, final ArrayNode output) {
+        for (Movie movie : currentMovieList) {
+            if (movie.getName().equals(movieName)) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                ObjectNode node = objectMapper.createObjectNode();
+                node.put("error", err);
+                node.set("currentMoviesList", objectMapper.convertValue(movie, JsonNode.class));
+                output.add(node);
+                return;
+            }
+        }
+        Errors err = new Errors();
+        err.loginErr(output, currentMovieList);
     }
 
 

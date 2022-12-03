@@ -9,9 +9,9 @@ public class Movie {
     private ArrayList<String> genres;
     private ArrayList<String> actors;
     private ArrayList<String> countriesBanned;
-    private double rating;
-
-
+    private int numLikes = 0;
+    private int rating;
+    private int numRatings = 0;
 
 
     public String getName() {
@@ -62,11 +62,27 @@ public class Movie {
         this.countriesBanned = countriesBanned;
     }
 
-    public double getRating() {
+    public int getRating() {
         return rating;
     }
 
-    public void setRating(final double rating) {
+    public void setRating(final int rating) {
         this.rating = rating;
+    }
+
+    public int getNumLikes() {
+        return numLikes;
+    }
+
+    public void setNumLikes(final int numLikes) {
+        this.numLikes = numLikes;
+    }
+
+    public int getNumRatings() {
+        return numRatings;
+    }
+
+    public void setNumRatings(final int numRatings) {
+        this.numRatings = numRatings;
     }
 }
