@@ -10,12 +10,7 @@ public class Pages {
     private boolean seeDetails;
 
     public Pages() {
-        homepageLoggedOut = true;
-        login = false;
-        register = false;
-        homepageLogged = false;
-        movies = false;
-        upgrades = false;
+       changePageHomepageLoggedOut();
     }
 
     public void changePage() {
@@ -57,6 +52,11 @@ public class Pages {
     public void changePageSeeDetails() {
         changePage();
         seeDetails = true;
+    }
+
+    public void changePageUpgrades() {
+        changePage();
+        upgrades = true;
     }
 
     public int getCurrentUserIdx() {

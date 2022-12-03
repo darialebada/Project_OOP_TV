@@ -8,4 +8,5 @@ public class Constants {
     public static final String OUT_PATH = "checker/result/result_";
     public static final String RESULT_PATH = "checker/result";
     public static final String OUT_FILE = "results.out";
+    public static final int premiumPrice = 10;
 }

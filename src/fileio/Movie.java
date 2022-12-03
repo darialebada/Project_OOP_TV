@@ -1,5 +1,7 @@
 package fileio;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 
 public class Movie {
@@ -12,6 +14,8 @@ public class Movie {
     private int numLikes = 0;
     private int rating;
     private int numRatings = 0;
+    @JsonIgnore
+    private ArrayList<Integer> ratingsList = new ArrayList<>();
 
 
     public String getName() {
@@ -84,5 +88,13 @@ public class Movie {
 
     public void setNumRatings(final int numRatings) {
         this.numRatings = numRatings;
+    }
+
+    public ArrayList<Integer> getRatingsList() {
+        return ratingsList;
+    }
+
+    public void setRatingsList(final ArrayList<Integer> ratingsList) {
+        this.ratingsList = ratingsList;
     }
 }

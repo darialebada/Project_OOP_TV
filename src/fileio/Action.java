@@ -6,7 +6,7 @@ public class Action {
     private String feature;
     private String movie;
     private String startsWith;
-    private int count;
+    private String count;
     private int rate;
     private String objectType;
     private Credentials credentials;
@@ -52,11 +52,11 @@ public class Action {
         this.startsWith = startsWith;
     }
 
-    public int getCount() {
+    public String getCount() {
         return count;
     }
 
-    public void setCount(final int count) {
+    public void setCount(final String count) {
         this.count = count;
     }
 

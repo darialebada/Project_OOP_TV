@@ -9,17 +9,17 @@ import fileio.Movie;
 import java.util.ArrayList;
 
 public class Errors {
+    private String user = null;
     public Errors() {
     }
 
-    public void loginErr(final ArrayNode output, final ArrayList<Movie> currentMovieList) {
+    public void pageErr(final ArrayNode output, final ArrayList<Movie> currentMovieList) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode node = objectMapper.createObjectNode();
         node.put("error", "Error");
-        //node.set("currentMoviesList", objectMapper.convertValue(currentMovieList, JsonNode.class));
-        node.putPOJO("currentMoviesList", currentMovieList);
-        String us = null;
-        node.put("currentUser", us);
+        node.set("currentMoviesList", objectMapper.convertValue(currentMovieList, JsonNode.class));
+        //node.putPOJO("currentMoviesList", currentMovieList);
+        node.put("currentUser", user);
         output.add(node);
     }
 }
