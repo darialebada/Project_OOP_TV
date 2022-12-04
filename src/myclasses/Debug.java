@@ -19,6 +19,7 @@ public final class Debug {
     private ArrayList<User> users;
     private ArrayList<Movie> movies;
     private ArrayList<Movie> currentMovieList;
+    private ArrayList<Movie> filteredMovieList;
     private String currentMovieOnPage;
     private final String error = null;
     private Errors err;
@@ -27,6 +28,7 @@ public final class Debug {
         users = new ArrayList<>(usersList);
         movies = new ArrayList<>(moviesList);
         currentMovieList = new ArrayList<>();
+        filteredMovieList = new ArrayList<>();
         err = new Errors();
         page =  new Pages();
         for (Action action : actions) {
@@ -60,8 +62,8 @@ public final class Debug {
             case "movies" -> {
                 if (page.isHomepageLogged() || page.isUpgrades() || page.isSeeDetails()) {
                     page.changePageMovies();
-                    //currentMovieList = new ArrayList<>();
-                    getCurrentMovieList(currentMovieList, output);
+                    filteredMovieList = getNotBannedMovies();
+                    getCurrentMovieList(output);
                     return;
                 }
             }
@@ -100,7 +102,7 @@ public final class Debug {
                 }
             }
             case "filter" -> {
-                if (page.isMovies()) {
+                if (page.isMovies() || page.isSeeDetails()) {
                     filter(action.getFilters(), output);
                 } else {
                     err.pageErr(output, currentMovieList);
@@ -175,9 +177,10 @@ public final class Debug {
         printUser(searchMovieList, output);
     }
 
-    public void getCurrentMovieList(ArrayList<Movie> movieList, final ArrayNode output) {
-        movieList = getNotBannedMovies();
-        printUser(movieList, output);
+    public void getCurrentMovieList(final ArrayNode output) {
+        //ArrayList<Movie> movieList = getNotBannedMovies();
+        //printUser(movieList, output);
+        printUser(filteredMovieList, output);
     }
 
     public ArrayList<Movie> getNotBannedMovies() {
@@ -210,7 +213,7 @@ public final class Debug {
                     }
                 }
             }
-            if (contains.getGenre() != null) {
+            if (contains.getGenre() != null && contains.getActors() == null) {
                 for (String genre : contains.getGenre()) {
                     if (movie.getGenres().contains(genre)) {
                         movieList.add(movie);
@@ -218,6 +221,7 @@ public final class Debug {
                 }
             }
         }
+        filteredMovieList = new ArrayList<>(movieList);
         return movieList;
     }
 
@@ -308,14 +312,13 @@ public final class Debug {
         } else if (filter.getContains() != null) {
             printUser(filteredMovieList, output);
         }
-        //currentMovieList = filteredMovieList;
     }
 
     public void seeDetails(final String movieName, final ArrayNode output) {
         ArrayList<Movie> searchedMovies = new ArrayList<>();
         ArrayList<Movie> notBannedMovies = getNotBannedMovies();
         //int ok = 0;
-        for (Movie movie : notBannedMovies) {
+        for (Movie movie : filteredMovieList) {
             if (movie.getName().equals(movieName)) {
                 searchedMovies.add(movie);
                 currentMovieOnPage = new String(movie.getName());
@@ -471,5 +474,33 @@ public final class Debug {
 
     public void setCurrentMovieList(final ArrayList<Movie> currentMovieList) {
         this.currentMovieList = currentMovieList;
+    }
+
+    public ArrayList<Movie> getFilteredMovieList() {
+        return filteredMovieList;
+    }
+
+    public void setFilteredMovieList(final ArrayList<Movie> filteredMovieList) {
+        this.filteredMovieList = filteredMovieList;
+    }
+
+    public String getCurrentMovieOnPage() {
+        return currentMovieOnPage;
+    }
+
+    public void setCurrentMovieOnPage(final String currentMovieOnPage) {
+        this.currentMovieOnPage = currentMovieOnPage;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public Errors getErr() {
+        return err;
+    }
+
+    public void setErr(final Errors err) {
+        this.err = err;
     }
 }
