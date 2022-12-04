@@ -11,6 +11,7 @@ public class Pages {
 
     public Pages() {
        changePageHomepageLoggedOut();
+       currentUserIdx = -1;
     }
 
     public void changePage() {
@@ -35,6 +36,7 @@ public class Pages {
 
     public void changePageHomepageLoggedOut() {
         changePage();
+        currentUserIdx = -1;
         homepageLoggedOut = true;
     }
 

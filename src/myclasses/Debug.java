@@ -52,11 +52,12 @@ public final class Debug {
                 }
             }
             case "logout" -> {
-                page.changePageHomepageLoggedOut();
-                return;
+                if (page.getCurrentUserIdx() > -1) {
+                    page.changePageHomepageLoggedOut();
+                    return;
+                }
             }
             case "movies" -> {
-                //TODO: PROBLEMA TESTUL 8/ 10
                 if (page.isHomepageLogged() || page.isUpgrades() || page.isSeeDetails()) {
                     page.changePageMovies();
                     getCurrentMovieList(currentMovieList, output);
@@ -224,54 +225,79 @@ public final class Debug {
             filteredMovieList = getFilteredMovies(filter.getContains());
         }
         if (filter.getSort() != null) {
-            switch (filter.getSort().getDuration()) {
-                case "increasing" -> {
-                    filteredMovieList.sort((o1, o2) -> {
-                        if (o1.getDuration() > o2.getDuration()) {
-                            return -1;
-                        } else if (o1.getDuration() < o2.getDuration()) {
-                            return 1;
-                        } else {
-                            if (filter.getSort().getRating().equals("increasing")) {
-                                if (o1.getRating() > o2.getRating()) {
-                                    return -1;
-                                } else if (o1.getRating() < o2.getRating()) {
-                                    return 1;
-                                }
+            if (filter.getSort().getDuration() != null) {
+                switch (filter.getSort().getDuration()) {
+                    case "increasing" -> {
+                        filteredMovieList.sort((o1, o2) -> {
+                            if (o1.getDuration() > o2.getDuration()) {
+                                return -1;
+                            } else if (o1.getDuration() < o2.getDuration()) {
+                                return 1;
                             } else {
-                                if (o1.getRating() < o2.getRating()) {
-                                    return -1;
-                                } else if (o1.getRating() > o2.getRating()) {
-                                    return 1;
+                                if (filter.getSort().getRating().equals("increasing")) {
+                                    if (o1.getRating() > o2.getRating()) {
+                                        return -1;
+                                    } else if (o1.getRating() < o2.getRating()) {
+                                        return 1;
+                                    }
+                                } else {
+                                    if (o1.getRating() < o2.getRating()) {
+                                        return -1;
+                                    } else if (o1.getRating() > o2.getRating()) {
+                                        return 1;
+                                    }
                                 }
                             }
-                        }
-                        return 0;
-                    });
+                            return 0;
+                        });
+                    }
+                    case "decreasing" -> {
+                        filteredMovieList.sort((o1, o2) -> {
+                            if (o1.getDuration() < o2.getDuration()) {
+                                return -1;
+                            } else if (o1.getDuration() > o2.getDuration()) {
+                                return 1;
+                            } else {
+                                if (filter.getSort().getRating().equals("increasing")) {
+                                    if (o1.getRating() > o2.getRating()) {
+                                        return -1;
+                                    } else if (o1.getRating() < o2.getRating()) {
+                                        return 1;
+                                    }
+                                } else {
+                                    if (o1.getRating() < o2.getRating()) {
+                                        return -1;
+                                    } else if (o1.getRating() > o2.getRating()) {
+                                        return 1;
+                                    }
+                                }
+                            }
+                            return 0;
+                        });
+                    }
                 }
-                case "decreasing" -> {
-                    filteredMovieList.sort((o1, o2) -> {
-                        if (o1.getDuration() < o2.getDuration()) {
-                            return -1;
-                        } else if (o1.getDuration() > o2.getDuration()) {
-                            return 1;
-                        } else {
-                            if (filter.getSort().getRating().equals("increasing")) {
-                                if (o1.getRating() > o2.getRating()) {
-                                    return -1;
-                                } else if (o1.getRating() < o2.getRating()) {
-                                    return 1;
-                                }
-                            } else {
-                                if (o1.getRating() < o2.getRating()) {
-                                    return -1;
-                                } else if (o1.getRating() > o2.getRating()) {
-                                    return 1;
-                                }
+            } else {
+                switch (filter.getSort().getRating()) {
+                    case "increasing" -> {
+                        filteredMovieList.sort((o1, o2) -> {
+                            if (o1.getRating() < o2.getRating()) {
+                                return -1;
+                            } else if (o1.getRating() > o2.getRating()) {
+                                return 1;
                             }
-                        }
-                        return 0;
-                    });
+                            return 0;
+                        });
+                    }
+                    case "decreasing" -> {
+                        filteredMovieList.sort((o1, o2) -> {
+                            if (o1.getRating() > o2.getRating()) {
+                                return -1;
+                            } else if (o1.getRating() < o2.getRating()) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                    }
                 }
             }
             printUser(filteredMovieList, output);
@@ -285,20 +311,11 @@ public final class Debug {
         for (Movie movie : notBannedMovies) {
             if (movie.getName().equals(movieName)) {
                 searchedMovies.add(movie);
-                //ok = 1;
                 currentMovieOnPage = new String(movie.getName());
                 printUser(searchedMovies, output);
                 return;
             }
         }
-        /*
-        if (ok == 1) {
-
-            printUser(searchedMovies, output);
-            return;
-        }
-
-         */
         currentMovieOnPage = null;
         err.pageErr(output, currentMovieList);
     }
@@ -337,17 +354,26 @@ public final class Debug {
     }
 
     public void purchaseMovie(final ArrayNode output) {
+        int numTokens = users.get(page.getCurrentUserIdx()).getTokensCount();
         int numFreePremiumMovies = users.get(page.getCurrentUserIdx()).getNumFreePremiumMovies();
-        if (numFreePremiumMovies == 0) {
-            return;
+        if (!(users.get(page.getCurrentUserIdx()).getCredentials().getAccountType().equals("premium")
+            && numFreePremiumMovies > 0)) {
+                if (numTokens < Constants.moviePrice) {
+                    return;
+                }
         }
+
         ArrayList<Movie> notBannedMovies = getNotBannedMovies();
         for (Movie movie : notBannedMovies) {
             if (movie.getName().equals(currentMovieOnPage)) {
                 ArrayList<Movie> mov = new ArrayList<>();
                 mov.add(movie);
                 users.get(page.getCurrentUserIdx()).getPurchasedMovies().add(movie);
-                users.get(page.getCurrentUserIdx()).setNumFreePremiumMovies(numFreePremiumMovies - 1);
+                if (numFreePremiumMovies > 0 && users.get(page.getCurrentUserIdx()).getCredentials().getAccountType().equals("premium")) {
+                    users.get(page.getCurrentUserIdx()).setNumFreePremiumMovies(numFreePremiumMovies - 1);
+                } else {
+                    users.get(page.getCurrentUserIdx()).setTokensCount(numTokens - Constants.moviePrice);
+                }
                 printUser(mov, output);
                 return;
             }
@@ -383,6 +409,10 @@ public final class Debug {
     }
 
     public void rateMovie(final int rate, final ArrayNode output) {
+        if (rate > 5) {
+            err.pageErr(output, currentMovieList);
+            return;
+        }
         for (Movie movie : users.get(page.getCurrentUserIdx()).getWatchedMovies()) {
             if (movie.getName().equals(currentMovieOnPage)) {
                 movie.setNumRatings(movie.getNumRatings() + 1);
