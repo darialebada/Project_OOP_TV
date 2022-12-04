@@ -23,6 +23,10 @@ public final class Debug {
     private String currentMovieOnPage;
     private final String error = null;
     private Errors err;
+
+    /**
+     * get the type of wanted action
+     */
     public void debug(final ArrayList<User> usersList, final ArrayList<Movie> moviesList,
                       final ArrayList<Action> actions, final ArrayNode output) {
         users = new ArrayList<>(usersList);
@@ -35,10 +39,14 @@ public final class Debug {
             switch (action.getType()) {
                 case "change page" -> changePage(action, output);
                 case "on page" -> onPage(action, output);
+                default -> System.out.println("error\n");
             }
         }
     }
 
+    /**
+     * possible cases for changing the current page
+     */
     public void changePage(final Action action, final ArrayNode output) {
         switch (action.getPage()) {
             case "login" -> {
@@ -80,10 +88,14 @@ public final class Debug {
                     return;
                 }
             }
+            default -> System.out.println("error\n");
         }
         err.pageErr(output, currentMovieList);
     }
 
+    /**
+     * possible cases for action performed on current page
+     */
     public void onPage(final Action action, final ArrayNode output) {
         switch (action.getFeature()) {
             case "login" -> {
@@ -93,9 +105,7 @@ public final class Debug {
                     err.pageErr(output, currentMovieList);
                 }
             }
-            case "register" -> {
-                register(action, output);
-            }
+            case "register" -> register(action, output);
             case "search" -> {
                 if (page.isMovies()) {
                     printSearchMovies(action.getStartsWith(), output);
@@ -108,31 +118,24 @@ public final class Debug {
                     err.pageErr(output, currentMovieList);
                 }
             }
-            case "buy tokens" -> {
-                buyTokens(action, output);
-            }
-            case "buy premium account" -> {
-                buyPremiumAccount(output);
-            }
-            case "purchase" -> {
-                purchaseMovie(output);
-            }
-            case "watch" -> {
-                watchMovie(output);
-            }
-            case "like" -> {
-                likedMovie(output);
-            }
-            case "rate" -> {
-                rateMovie(action.getRate(), output);
-            }
+            case "buy tokens" -> buyTokens(action, output);
+            case "buy premium account" -> buyPremiumAccount(output);
+            case "purchase" -> purchaseMovie(output);
+            case "watch" -> watchMovie(output);
+            case "like" -> likedMovie(output);
+            case "rate" -> rateMovie(action.getRate(), output);
+            default -> System.out.println("error\n");
         }
     }
 
+    /**
+     * check if there is a valid user with given credentials
+     */
     public void login(final Action action, final ArrayNode output) {
         for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getCredentials().getName().equals(action.getCredentials().getName()) &&
-                users.get(i).getCredentials().getPassword().equals(action.getCredentials().getPassword())) {
+            if (users.get(i).getCredentials().getName().equals(action.getCredentials().getName())
+                && users.get(i).getCredentials().getPassword().equals(action.getCredentials().
+                getPassword())) {
                     page.changePageHomepageLogged(i);
                     printUser(currentMovieList, output);
                     return;
@@ -142,6 +145,9 @@ public final class Debug {
         err.pageErr(output, currentMovieList);
     }
 
+    /**
+     * register a new user (add it to userList)
+     */
     public void register(final Action action, final ArrayNode output) {
         for (User user : users) {
             if (user.getCredentials().getName().equals(action.getCredentials().getName())) {
@@ -156,16 +162,26 @@ public final class Debug {
         printUser(currentMovieList, output);
     }
 
+    /**
+     * print credentials and info for current user
+     * @param movieList - movie list available for current user
+     * @param output for output file
+     */
     public void printUser(final ArrayList<Movie> movieList, final ArrayNode output) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode node = objectMapper.createObjectNode();
         node.put("error", error);
         node.set("currentMoviesList", objectMapper.convertValue(movieList, JsonNode.class));
-        //node.putPOJO("currentMoviesList", movieList);
-        node.set("currentUser", objectMapper.convertValue(users.get(page.getCurrentUserIdx()), JsonNode.class));
+        node.set("currentUser", objectMapper.convertValue(users.get(page.getCurrentUserIdx()),
+                JsonNode.class));
         output.add(node);
     }
 
+    /**
+     * find movies starting with given string
+     * @param startsWith - what to search for
+     * @param output for output file
+     */
     public void printSearchMovies(final String startsWith, final ArrayNode output) {
         ArrayList<Movie> notBannedMovies = getNotBannedMovies();
         ArrayList<Movie> searchMovieList = new ArrayList<>();
@@ -177,26 +193,36 @@ public final class Debug {
         printUser(searchMovieList, output);
     }
 
+    /**
+     * print all available movies for current user filtered or not
+     */
     public void getCurrentMovieList(final ArrayNode output) {
         //ArrayList<Movie> movieList = getNotBannedMovies();
         //printUser(movieList, output);
         printUser(filteredMovieList, output);
     }
 
+    /**
+     * @return list of movies available for current user
+     */
     public ArrayList<Movie> getNotBannedMovies() {
         ArrayList<Movie> movieList = new ArrayList<>();
         for (Movie movie : movies) {
-            if (!movie.getCountriesBanned().contains(users.get(page.getCurrentUserIdx()).getCredentials().getCountry())) {
+            if (!movie.getCountriesBanned().contains(users.get(page.getCurrentUserIdx()).
+                    getCredentials().getCountry())) {
                 movieList.add(movie);
             }
         }
         return movieList;
     }
 
+    /**
+     * @return movie list filtered after actors/ genres
+     */
     public ArrayList<Movie> getFilteredMovies(final ContainsInput contains) {
         ArrayList<Movie> movieList = new ArrayList<>();
-        //TODO: EROARE REF?
-        ArrayList<Movie> notBannedMovies = getNotBannedMovies();
+        // EROARE REF?
+        //ArrayList<Movie> notBannedMovies = getNotBannedMovies();
         for (Movie movie : movies) {
             if (contains.getActors() != null) {
                 for (String name : contains.getActors()) {
@@ -225,103 +251,103 @@ public final class Debug {
         return movieList;
     }
 
+    /**
+     * sorts movie list by duration/ rating
+     */
     public void filter(final FilterInput filter, final ArrayNode output) {
-        ArrayList<Movie> filteredMovieList;
+        ArrayList<Movie> filteredMovies;
         if (filter.getContains() == null) {
-            filteredMovieList = getNotBannedMovies();
+            filteredMovies = getNotBannedMovies();
         } else {
-            filteredMovieList = getFilteredMovies(filter.getContains());
+            filteredMovies = getFilteredMovies(filter.getContains());
         }
         if (filter.getSort() != null) {
             if (filter.getSort().getDuration() != null) {
                 switch (filter.getSort().getDuration()) {
-                    case "increasing" -> {
-                        filteredMovieList.sort((o1, o2) -> {
-                            if (o1.getDuration() > o2.getDuration()) {
-                                return -1;
-                            } else if (o1.getDuration() < o2.getDuration()) {
-                                return 1;
+                    case "increasing" -> filteredMovies.sort((o1, o2) -> {
+                        if (o1.getDuration() > o2.getDuration()) {
+                            return -1;
+                        } else if (o1.getDuration() < o2.getDuration()) {
+                            return 1;
+                        } else {
+                            if (filter.getSort().getRating().equals("increasing")) {
+                                if (o1.getRating() > o2.getRating()) {
+                                    return -1;
+                                } else if (o1.getRating() < o2.getRating()) {
+                                    return 1;
+                                }
                             } else {
-                                if (filter.getSort().getRating().equals("increasing")) {
-                                    if (o1.getRating() > o2.getRating()) {
-                                        return -1;
-                                    } else if (o1.getRating() < o2.getRating()) {
-                                        return 1;
-                                    }
-                                } else {
-                                    if (o1.getRating() < o2.getRating()) {
-                                        return -1;
-                                    } else if (o1.getRating() > o2.getRating()) {
-                                        return 1;
-                                    }
+                                if (o1.getRating() < o2.getRating()) {
+                                    return -1;
+                                } else if (o1.getRating() > o2.getRating()) {
+                                    return 1;
                                 }
                             }
-                            return 0;
-                        });
-                    }
-                    case "decreasing" -> {
-                        filteredMovieList.sort((o1, o2) -> {
-                            if (o1.getDuration() < o2.getDuration()) {
-                                return -1;
-                            } else if (o1.getDuration() > o2.getDuration()) {
-                                return 1;
+                        }
+                        return 0;
+                    });
+                    case "decreasing" -> filteredMovies.sort((o1, o2) -> {
+                        if (o1.getDuration() < o2.getDuration()) {
+                            return -1;
+                        } else if (o1.getDuration() > o2.getDuration()) {
+                            return 1;
+                        } else {
+                            if (filter.getSort().getRating().equals("increasing")) {
+                                if (o1.getRating() > o2.getRating()) {
+                                    return -1;
+                                } else if (o1.getRating() < o2.getRating()) {
+                                    return 1;
+                                }
                             } else {
-                                if (filter.getSort().getRating().equals("increasing")) {
-                                    if (o1.getRating() > o2.getRating()) {
-                                        return -1;
-                                    } else if (o1.getRating() < o2.getRating()) {
-                                        return 1;
-                                    }
-                                } else {
-                                    if (o1.getRating() < o2.getRating()) {
-                                        return -1;
-                                    } else if (o1.getRating() > o2.getRating()) {
-                                        return 1;
-                                    }
+                                if (o1.getRating() < o2.getRating()) {
+                                    return -1;
+                                } else if (o1.getRating() > o2.getRating()) {
+                                    return 1;
                                 }
                             }
-                            return 0;
-                        });
-                    }
+                        }
+                        return 0;
+                    });
+                    default -> System.out.println("error\n");
                 }
             } else {
                 switch (filter.getSort().getRating()) {
-                    case "increasing" -> {
-                        filteredMovieList.sort((o1, o2) -> {
-                            if (o1.getRating() < o2.getRating()) {
-                                return -1;
-                            } else if (o1.getRating() > o2.getRating()) {
-                                return 1;
-                            }
-                            return 0;
-                        });
-                    }
-                    case "decreasing" -> {
-                        filteredMovieList.sort((o1, o2) -> {
-                            if (o1.getRating() > o2.getRating()) {
-                                return -1;
-                            } else if (o1.getRating() < o2.getRating()) {
-                                return 1;
-                            }
-                            return 0;
-                        });
-                    }
+                    case "increasing" -> filteredMovies.sort((o1, o2) -> {
+                        if (o1.getRating() < o2.getRating()) {
+                            return -1;
+                        } else if (o1.getRating() > o2.getRating()) {
+                            return 1;
+                        }
+                        return 0;
+                    });
+                    case "decreasing" -> filteredMovies.sort((o1, o2) -> {
+                        if (o1.getRating() > o2.getRating()) {
+                            return -1;
+                        } else if (o1.getRating() < o2.getRating()) {
+                            return 1;
+                        }
+                        return 0;
+                    });
+                    default -> System.out.println("error\n");
                 }
             }
-            printUser(filteredMovieList, output);
+            printUser(filteredMovies, output);
         } else if (filter.getContains() != null) {
-            printUser(filteredMovieList, output);
+            printUser(filteredMovies, output);
         }
     }
 
+    /**
+     * @param movieName - movie wanted by user
+     * @param output for output data
+     */
     public void seeDetails(final String movieName, final ArrayNode output) {
         ArrayList<Movie> searchedMovies = new ArrayList<>();
-        ArrayList<Movie> notBannedMovies = getNotBannedMovies();
-        //int ok = 0;
+        //ArrayList<Movie> notBannedMovies = getNotBannedMovies();
         for (Movie movie : filteredMovieList) {
             if (movie.getName().equals(movieName)) {
                 searchedMovies.add(movie);
-                currentMovieOnPage = new String(movie.getName());
+                currentMovieOnPage = movie.getName();
                 printUser(searchedMovies, output);
                 return;
             }
@@ -330,6 +356,7 @@ public final class Debug {
         err.pageErr(output, currentMovieList);
     }
 
+    /*
     public void printMovie(final Movie movie,final ArrayNode output) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode node = objectMapper.createObjectNode();
@@ -337,10 +364,15 @@ public final class Debug {
         node.set("currentMoviesList", objectMapper.convertValue(movie, JsonNode.class));
         output.add(node);
     }
+     */
 
+    /**
+     * action for buying tokens
+     */
     public void buyTokens(final Action action, final ArrayNode output) {
         int nrTokens = users.get(page.getCurrentUserIdx()).getTokensCount();
-        int newBalance = Integer.parseInt(users.get(page.getCurrentUserIdx()).getCredentials().getBalance());
+        int newBalance = Integer.parseInt(users.get(page.getCurrentUserIdx()).
+                getCredentials().getBalance());
         int count = Integer.parseInt(action.getCount());
         if (newBalance < count) {
             err.pageErr(output, currentMovieList);
@@ -349,26 +381,29 @@ public final class Debug {
         newBalance -= count;
         nrTokens += count;
         users.get(page.getCurrentUserIdx()).setTokensCount(nrTokens);
-        users.get(page.getCurrentUserIdx()).getCredentials().setBalance(Integer.toString(newBalance));
+        users.get(page.getCurrentUserIdx()).getCredentials().
+                setBalance(Integer.toString(newBalance));
     }
 
     public void buyPremiumAccount(final ArrayNode output) {
         int nrTokens = users.get(page.getCurrentUserIdx()).getTokensCount();
-        if (nrTokens < Constants.premiumPrice) {
+        if (nrTokens < Constants.PREMIUM_PRICE) {
             err.pageErr(output, currentMovieList);
             return;
         }
-        nrTokens -= Constants.premiumPrice;
+        nrTokens -= Constants.PREMIUM_PRICE;
         users.get(page.getCurrentUserIdx()).setTokensCount(nrTokens);
         users.get(page.getCurrentUserIdx()).getCredentials().setAccountType("premium");
     }
 
+
     public void purchaseMovie(final ArrayNode output) {
         int numTokens = users.get(page.getCurrentUserIdx()).getTokensCount();
-        int numFreePremiumMovies = users.get(page.getCurrentUserIdx()).getNumFreePremiumMovies();
-        if (!(users.get(page.getCurrentUserIdx()).getCredentials().getAccountType().equals("premium")
-            && numFreePremiumMovies > 0)) {
-                if (numTokens < Constants.moviePrice) {
+        int numFreePremiumMovies = users.get(page.getCurrentUserIdx()).
+                getNumFreePremiumMovies();
+        if (!(users.get(page.getCurrentUserIdx()).getCredentials().getAccountType().
+                equals("premium") && numFreePremiumMovies > 0)) {
+                if (numTokens < Constants.MOVIE_PRICE) {
                     return;
                 }
         }
@@ -379,10 +414,13 @@ public final class Debug {
                 ArrayList<Movie> mov = new ArrayList<>();
                 mov.add(movie);
                 users.get(page.getCurrentUserIdx()).getPurchasedMovies().add(movie);
-                if (numFreePremiumMovies > 0 && users.get(page.getCurrentUserIdx()).getCredentials().getAccountType().equals("premium")) {
-                    users.get(page.getCurrentUserIdx()).setNumFreePremiumMovies(numFreePremiumMovies - 1);
+                if (numFreePremiumMovies > 0 && users.get(page.getCurrentUserIdx()).
+                        getCredentials().getAccountType().equals("premium")) {
+                    users.get(page.getCurrentUserIdx()).
+                            setNumFreePremiumMovies(numFreePremiumMovies - 1);
                 } else {
-                    users.get(page.getCurrentUserIdx()).setTokensCount(numTokens - Constants.moviePrice);
+                    users.get(page.getCurrentUserIdx()).
+                            setTokensCount(numTokens - Constants.MOVIE_PRICE);
                 }
                 printUser(mov, output);
                 return;
@@ -419,7 +457,7 @@ public final class Debug {
     }
 
     public void rateMovie(final int rate, final ArrayNode output) {
-        if (rate > 5) {
+        if (rate > Constants.MAX_RATE) {
             err.pageErr(output, currentMovieList);
             return;
         }
@@ -431,8 +469,7 @@ public final class Debug {
                 for (Integer rating : movie.getRatingsList()) {
                     sum += rating;
                 }
-                movie.setRating((int)sum);
-
+                movie.setRating((int) sum);
                 ArrayList<Movie> mov = new ArrayList<>();
                 mov.add(movie);
                 users.get(page.getCurrentUserIdx()).getRatedMovies().add(movie);
@@ -468,39 +505,7 @@ public final class Debug {
         this.movies = movies;
     }
 
-    public ArrayList<Movie> getCurrentMovieList() {
-        return currentMovieList;
-    }
-
-    public void setCurrentMovieList(final ArrayList<Movie> currentMovieList) {
-        this.currentMovieList = currentMovieList;
-    }
-
-    public ArrayList<Movie> getFilteredMovieList() {
-        return filteredMovieList;
-    }
-
-    public void setFilteredMovieList(final ArrayList<Movie> filteredMovieList) {
-        this.filteredMovieList = filteredMovieList;
-    }
-
-    public String getCurrentMovieOnPage() {
-        return currentMovieOnPage;
-    }
-
-    public void setCurrentMovieOnPage(final String currentMovieOnPage) {
-        this.currentMovieOnPage = currentMovieOnPage;
-    }
-
     public String getError() {
         return error;
-    }
-
-    public Errors getErr() {
-        return err;
-    }
-
-    public void setErr(final Errors err) {
-        this.err = err;
     }
 }

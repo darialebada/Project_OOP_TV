@@ -1,6 +1,6 @@
 package fileio;
 
-public class Action {
+public final class Action {
     private String type;
     private String page;
     private String feature;
@@ -8,9 +8,20 @@ public class Action {
     private String startsWith;
     private String count;
     private int rate;
-    private String objectType;
+    //private String objectType;
     private Credentials credentials;
     private FilterInput filters;
+
+    public Action() {
+    }
+
+    public Action(final String startsWith, final String count,
+                  final FilterInput filters, final int rate) {
+        this.startsWith = startsWith;
+        this.count = count;
+        this.filters = filters;
+        this.rate = rate;
+    }
 
     public String getType() {
         return type;
@@ -48,32 +59,12 @@ public class Action {
         return startsWith;
     }
 
-    public void setStartsWith(final String startsWith) {
-        this.startsWith = startsWith;
-    }
-
     public String getCount() {
         return count;
     }
 
-    public void setCount(final String count) {
-        this.count = count;
-    }
-
     public int getRate() {
         return rate;
-    }
-
-    public void setRate(int rate) {
-        this.rate = rate;
-    }
-
-    public String getObjectType() {
-        return objectType;
-    }
-
-    public void setObjectType(final String objectType) {
-        this.objectType = objectType;
     }
 
     public Credentials getCredentials() {
@@ -86,9 +77,5 @@ public class Action {
 
     public FilterInput getFilters() {
         return filters;
-    }
-
-    public void setFilters(final FilterInput filters) {
-        this.filters = filters;
     }
 }

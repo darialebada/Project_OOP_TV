@@ -1,8 +1,10 @@
 package fileio;
 
+import utils.Constants;
+
 import java.util.ArrayList;
 
-public class User {
+public final class User {
     private Credentials credentials;
     private int tokensCount;
     private int numFreePremiumMovies;
@@ -11,20 +13,20 @@ public class User {
     private ArrayList<Movie> likedMovies;
     private ArrayList<Movie> ratedMovies;
 
+
     public User() {
         tokensCount = 0;
-        numFreePremiumMovies = 15;
+        numFreePremiumMovies = Constants.NUM_FREE_PREMIUM_MOVIES;
         purchasedMovies = new ArrayList<>();
         watchedMovies = new ArrayList<>();
         likedMovies = new ArrayList<>();
         ratedMovies = new ArrayList<>();
     }
 
-    public User(Credentials credentials) {
+    public User(final Credentials credentials) {
         this.credentials = new Credentials(credentials);
-        //this.credentials = credentials;
         tokensCount = 0;
-        numFreePremiumMovies = 15;
+        numFreePremiumMovies = Constants.NUM_FREE_PREMIUM_MOVIES;
         purchasedMovies = new ArrayList<>();
         watchedMovies = new ArrayList<>();
         likedMovies = new ArrayList<>();

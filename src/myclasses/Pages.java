@@ -1,5 +1,5 @@
 package myclasses;
-public class Pages {
+public final class Pages {
     private int currentUserIdx;
     private boolean homepageLoggedOut;
     private boolean login;
@@ -14,6 +14,9 @@ public class Pages {
        currentUserIdx = -1;
     }
 
+    /**
+     * changing the current page
+     */
     public void changePage() {
         homepageLoggedOut = false;
         login = false;
@@ -24,38 +27,59 @@ public class Pages {
         seeDetails = false;
     }
 
+    /**
+     * page successfully changed to login page
+     */
     public void changePageLogin() {
         changePage();
         login = true;
     }
 
+    /**
+     * page successfully changed to register page
+     */
     public void changePageRegister() {
         changePage();
         register = true;
     }
 
+    /**
+     * page successfully changed to homepage logged out page
+     */
     public void changePageHomepageLoggedOut() {
         changePage();
         currentUserIdx = -1;
         homepageLoggedOut = true;
     }
 
+    /**
+     * page successfully changed to homepage logged in page
+     */
     public void changePageHomepageLogged(final int idx) {
         changePage();
         currentUserIdx = idx;
         homepageLogged = true;
     }
 
+    /**
+     * page successfully changed to movies page
+     */
     public void changePageMovies() {
         changePage();
         movies = true;
     }
 
+    /**
+     * page successfully changed to see details page
+     */
     public void changePageSeeDetails() {
         changePage();
         seeDetails = true;
     }
 
+    /**
+     * page successfully changed to upgrades page
+     */
     public void changePageUpgrades() {
         changePage();
         upgrades = true;
@@ -65,63 +89,26 @@ public class Pages {
         return currentUserIdx;
     }
 
-    public void setCurrentUserIdx(final int currentUserIdx) {
-        this.currentUserIdx = currentUserIdx;
-    }
-
     public boolean isHomepageLoggedOut() {
         return homepageLoggedOut;
-    }
-
-    public void setHomepageLoggedOut(final boolean homepageLoggedOut) {
-        this.homepageLoggedOut = homepageLoggedOut;
     }
 
     public boolean isLogin() {
         return login;
     }
 
-    public void setLogin(final boolean login) {
-        this.login = login;
-    }
-
-    public boolean isRegister() {
-        return register;
-    }
-
-    public void setRegister(final boolean register) {
-        this.register = register;
-    }
-
     public boolean isHomepageLogged() {
         return homepageLogged;
-    }
-
-    public void setHomepageLogged(final boolean homepageLogged) {
-        this.homepageLogged = homepageLogged;
     }
 
     public boolean isMovies() {
         return movies;
     }
 
-    public void setMovies(final boolean movies) {
-        this.movies = movies;
-    }
-
     public boolean isUpgrades() {
         return upgrades;
     }
-
-    public void setUpgrades(final boolean upgrades) {
-        this.upgrades = upgrades;
-    }
-
     public boolean isSeeDetails() {
         return seeDetails;
-    }
-
-    public void setSeeDetails(final boolean seeDetails) {
-        this.seeDetails = seeDetails;
     }
 }

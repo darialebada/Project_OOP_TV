@@ -1,17 +1,15 @@
 package fileio;
 
-public class Credentials {
+public final class Credentials {
     private String name;
     private String password;
-    private String accountType; // standard - premium
+    private String accountType;
     private String country;
     private String balance;
-   // private int token;
-   // private ArrayList<Movie> movies;
 
     public Credentials() {
     }
-    public Credentials(Credentials credentials) {
+    public Credentials(final Credentials credentials) {
         this.name = credentials.name;
         this.password = credentials.password;
         this.accountType = credentials.accountType;

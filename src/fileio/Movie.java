@@ -4,19 +4,24 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 
-public class Movie {
+public final class Movie {
     private String name;
     private int year;
     private int duration;
     private ArrayList<String> genres;
     private ArrayList<String> actors;
     private ArrayList<String> countriesBanned;
-    private int numLikes = 0;
+    private int numLikes;
     private int rating;
-    private int numRatings = 0;
+    private int numRatings;
     @JsonIgnore
-    private ArrayList<Integer> ratingsList = new ArrayList<>();
+    private ArrayList<Integer> ratingsList;
 
+    public Movie() {
+        numLikes = 0;
+        numRatings = 0;
+        ratingsList = new ArrayList<>();
+    }
 
     public String getName() {
         return name;
@@ -92,9 +97,5 @@ public class Movie {
 
     public ArrayList<Integer> getRatingsList() {
         return ratingsList;
-    }
-
-    public void setRatingsList(final ArrayList<Integer> ratingsList) {
-        this.ratingsList = ratingsList;
     }
 }

@@ -2,7 +2,7 @@ package fileio;
 
 import java.util.ArrayList;
 
-public class ContainsInput {
+public final class ContainsInput {
     private ArrayList<String> actors;
     private ArrayList<String> genre;
 
@@ -18,7 +18,4 @@ public class ContainsInput {
         return genre;
     }
 
-    public void setGenre(final ArrayList<String> genre) {
-        this.genre = genre;
-    }
 }

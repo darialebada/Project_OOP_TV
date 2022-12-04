@@ -1,6 +1,6 @@
 package fileio;
 
-public class SortInput {
+public final class SortInput {
     private String rating;
     private String duration;
 

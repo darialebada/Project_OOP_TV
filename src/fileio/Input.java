@@ -2,11 +2,10 @@ package fileio;
 
 import java.util.ArrayList;
 
-public class Input {
+public final class Input {
     private ArrayList<User> users;
     private ArrayList<Movie> movies;
     private ArrayList<Action> actions;
-
 
     public ArrayList<User> getUsers() {
         return users;

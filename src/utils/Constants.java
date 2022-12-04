@@ -1,13 +1,11 @@
 package utils;
 
-public class Constants {
+public final class Constants {
     private Constants() {
     }
 
-    public static final String TESTS_PATH = "checker/resources/in/";
-    public static final String OUT_PATH = "checker/result/result_";
-    public static final String RESULT_PATH = "checker/result";
-    public static final String OUT_FILE = "results.out";
-    public static final int premiumPrice = 10;
-    public static final int moviePrice = 2;
+    public static final int NUM_FREE_PREMIUM_MOVIES = 15;
+    public static final int PREMIUM_PRICE = 10;
+    public static final int MAX_RATE = 5;
+    public static final int MOVIE_PRICE = 2;
 }
