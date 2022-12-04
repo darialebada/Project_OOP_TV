@@ -60,6 +60,7 @@ public final class Debug {
             case "movies" -> {
                 if (page.isHomepageLogged() || page.isUpgrades() || page.isSeeDetails()) {
                     page.changePageMovies();
+                    //currentMovieList = new ArrayList<>();
                     getCurrentMovieList(currentMovieList, output);
                     return;
                 }
@@ -112,11 +113,7 @@ public final class Debug {
                 buyPremiumAccount(output);
             }
             case "purchase" -> {
-               // if (action.getObjectType() != null) {
-                   // if (action.getObjectType().equals("movie")) {
-                        purchaseMovie(output);
-                   // }
-               // }
+                purchaseMovie(output);
             }
             case "watch" -> {
                 watchMovie(output);
@@ -195,21 +192,28 @@ public final class Debug {
 
     public ArrayList<Movie> getFilteredMovies(final ContainsInput contains) {
         ArrayList<Movie> movieList = new ArrayList<>();
-        // TODO: MODIFY
+        //TODO: EROARE REF?
+        ArrayList<Movie> notBannedMovies = getNotBannedMovies();
         for (Movie movie : movies) {
-            if (!movie.getCountriesBanned().contains(users.get(page.getCurrentUserIdx()).getCredentials().getCountry())) {
-                if (contains.getActors() != null) {
-                    for (String name : contains.getActors()) {
-                        if (contains.getActors().contains(name)) {
+            if (contains.getActors() != null) {
+                for (String name : contains.getActors()) {
+                    if (movie.getActors().contains(name)) {
+                        if (contains.getGenre() != null) {
+                            for (String genre : contains.getGenre()) {
+                                if (movie.getGenres().contains(genre)) {
+                                    movieList.add(movie);
+                                }
+                            }
+                        } else {
                             movieList.add(movie);
                         }
                     }
                 }
-                if (contains.getGenre() != null) {
-                    for (String genre : contains.getGenre()) {
-                        if (contains.getGenre().contains(genre)) {
-                            movieList.add(movie);
-                        }
+            }
+            if (contains.getGenre() != null) {
+                for (String genre : contains.getGenre()) {
+                    if (movie.getGenres().contains(genre)) {
+                        movieList.add(movie);
                     }
                 }
             }
@@ -301,7 +305,10 @@ public final class Debug {
                 }
             }
             printUser(filteredMovieList, output);
+        } else if (filter.getContains() != null) {
+            printUser(filteredMovieList, output);
         }
+        //currentMovieList = filteredMovieList;
     }
 
     public void seeDetails(final String movieName, final ArrayNode output) {
