@@ -221,9 +221,8 @@ public final class Debug {
      */
     public ArrayList<Movie> getFilteredMovies(final ContainsInput contains) {
         ArrayList<Movie> movieList = new ArrayList<>();
-        // EROARE REF?
-        //ArrayList<Movie> notBannedMovies = getNotBannedMovies();
-        for (Movie movie : movies) {
+        ArrayList<Movie> notBannedMovies = getNotBannedMovies();
+        for (Movie movie : notBannedMovies) {
             if (contains.getActors() != null) {
                 for (String name : contains.getActors()) {
                     if (movie.getActors().contains(name)) {
@@ -265,21 +264,21 @@ public final class Debug {
             if (filter.getSort().getDuration() != null) {
                 switch (filter.getSort().getDuration()) {
                     case "increasing" -> filteredMovies.sort((o1, o2) -> {
-                        if (o1.getDuration() > o2.getDuration()) {
+                        if (o1.getDuration() < o2.getDuration()) {
                             return -1;
-                        } else if (o1.getDuration() < o2.getDuration()) {
+                        } else if (o1.getDuration() > o2.getDuration()) {
                             return 1;
                         } else {
                             if (filter.getSort().getRating().equals("increasing")) {
-                                if (o1.getRating() > o2.getRating()) {
-                                    return -1;
-                                } else if (o1.getRating() < o2.getRating()) {
-                                    return 1;
-                                }
-                            } else {
                                 if (o1.getRating() < o2.getRating()) {
                                     return -1;
                                 } else if (o1.getRating() > o2.getRating()) {
+                                    return 1;
+                                }
+                            } else {
+                                if (o1.getRating() > o2.getRating()) {
+                                    return -1;
+                                } else if (o1.getRating() < o2.getRating()) {
                                     return 1;
                                 }
                             }
@@ -287,21 +286,21 @@ public final class Debug {
                         return 0;
                     });
                     case "decreasing" -> filteredMovies.sort((o1, o2) -> {
-                        if (o1.getDuration() < o2.getDuration()) {
+                        if (o1.getDuration() > o2.getDuration()) {
                             return -1;
-                        } else if (o1.getDuration() > o2.getDuration()) {
+                        } else if (o1.getDuration() < o2.getDuration()) {
                             return 1;
                         } else {
                             if (filter.getSort().getRating().equals("increasing")) {
-                                if (o1.getRating() > o2.getRating()) {
-                                    return -1;
-                                } else if (o1.getRating() < o2.getRating()) {
-                                    return 1;
-                                }
-                            } else {
                                 if (o1.getRating() < o2.getRating()) {
                                     return -1;
                                 } else if (o1.getRating() > o2.getRating()) {
+                                    return 1;
+                                }
+                            } else {
+                                if (o1.getRating() > o2.getRating()) {
+                                    return -1;
+                                } else if (o1.getRating() < o2.getRating()) {
                                     return 1;
                                 }
                             }
