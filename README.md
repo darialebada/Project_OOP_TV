@@ -11,7 +11,7 @@ ajutorul clasei Input datele de intrare se prelucrează în obiecte de tip User,
 - Checker (Test.java);
 - Teste de input & ref;
 - fileio -> pachet care conține clasele în care vor fi convertite datele de input;
-- app.management -> pachet care conține clasele care se ocupă de flow-ul proiectului și rularea comenzilor date de utilizator la input; aici
+- management -> pachet care conține clasele care se ocupă de flow-ul proiectului și rularea comenzilor date de utilizator la input; aici
 se află clasa Pages care se ocupă de ”schimbarea paginilor” în aplicație;
 - utils -> pachet care conține clase ajutătoare: Constants (definește anumite constante numerice necesare în program) și Errors (afișează
 output-ul specific pentru cănd este întâmpinată o eroare -> clasă implementată Singleton care folosește lazy instantiation).

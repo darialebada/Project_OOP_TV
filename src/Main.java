@@ -1,4 +1,4 @@
-import app.management.AppManager;
+import management.AppManager;
 import fileio.Input;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;

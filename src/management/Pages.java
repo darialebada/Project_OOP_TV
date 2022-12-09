@@ -1,4 +1,4 @@
-package app.management;
+package management;
 
 public final class Pages {
     private int currentUserIdx;

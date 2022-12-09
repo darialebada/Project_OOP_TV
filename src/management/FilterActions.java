@@ -1,4 +1,4 @@
-package app.management;
+package management;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import fileio.ContainsInput;
