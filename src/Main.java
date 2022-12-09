@@ -1,4 +1,4 @@
-import myclasses.Debug;
+import app.management.AppManager;
 import fileio.Input;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -39,7 +39,7 @@ public final class Main {
 
         ArrayNode output = objectMapper.createArrayNode();
 
-        Debug commands = new Debug();
+        AppManager commands = new AppManager();
         commands.debug(inputData.getUsers(), inputData.getMovies(),
                 inputData.getActions(), output);
 

@@ -1,6 +1,7 @@
 package fileio;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import utils.Constants;
 
 import java.util.ArrayList;
 
@@ -12,10 +13,10 @@ public final class Movie {
     private ArrayList<String> actors;
     private ArrayList<String> countriesBanned;
     private int numLikes;
-    private int rating;
+    private double rating;
     private int numRatings;
     @JsonIgnore
-    private ArrayList<Integer> ratingsList;
+    private ArrayList<Double> ratingsList;
 
     public Movie() {
         numLikes = 0;
@@ -71,12 +72,16 @@ public final class Movie {
         this.countriesBanned = countriesBanned;
     }
 
-    public int getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(final int rating) {
-        this.rating = rating;
+    /**
+     * set rating as a double with 2 decimals
+     */
+    public void setRating(final double rating) {
+        int r = (int) (rating * Constants.MAKE_FIXED_DOUBLE);
+        this.rating = r / Constants.MAKE_FIXED_DOUBLE_FINAL;
     }
 
     public int getNumLikes() {
@@ -95,7 +100,7 @@ public final class Movie {
         this.numRatings = numRatings;
     }
 
-    public ArrayList<Integer> getRatingsList() {
+    public ArrayList<Double> getRatingsList() {
         return ratingsList;
     }
 }

@@ -1,4 +1,5 @@
-package myclasses;
+package app.management;
+
 public final class Pages {
     private int currentUserIdx;
     private boolean homepageLoggedOut;
@@ -103,6 +104,10 @@ public final class Pages {
 
     public boolean isMovies() {
         return movies;
+    }
+
+    public boolean isRegister() {
+        return register;
     }
 
     public boolean isUpgrades() {

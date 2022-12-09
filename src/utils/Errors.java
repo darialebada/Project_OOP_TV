@@ -9,17 +9,25 @@ import fileio.Movie;
 import java.util.ArrayList;
 
 public final class Errors {
-    private final String user;
-    public Errors() {
-        user = null;
+    /* singleton design instance */
+    private static Errors errorsInstance = null;
+    private final String user = null;
+    private final ArrayList<Movie> currentMovieList = new ArrayList<>();
+    private Errors() {
+    }
+    public static Errors getErrorsInstance() {
+        if (errorsInstance == null) {
+            errorsInstance = new Errors();
+        }
+        return errorsInstance;
     }
 
     /**
      * error in case of wrong action
+     *
      * @param output for where to write data
-     * @param currentMovieList for list of current movies (null for error)
      */
-    public void pageErr(final ArrayNode output, final ArrayList<Movie> currentMovieList) {
+    public void pageErr(final ArrayNode output) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode node = objectMapper.createObjectNode();
         node.put("error", "Error");
