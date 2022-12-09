@@ -13,7 +13,6 @@ public final class User {
     private ArrayList<Movie> likedMovies;
     private ArrayList<Movie> ratedMovies;
 
-
     public User() {
         tokensCount = 0;
         numFreePremiumMovies = Constants.NUM_FREE_PREMIUM_MOVIES;

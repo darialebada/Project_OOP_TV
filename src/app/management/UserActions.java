@@ -9,10 +9,10 @@ import utils.Errors;
 import java.util.ArrayList;
 
 public final class UserActions {
-    private ArrayList<User> users;
-    private Pages page;
+    private final ArrayList<User> users;
+    private final Pages page;
     private final ArrayList<Movie> currentMovieList = new ArrayList<>();
-    private Errors err = Errors.getErrorsInstance();
+    private final Errors err = Errors.getErrorsInstance();
 
     public UserActions(final ArrayList<User> users, final Pages page) {
         this.users = users;

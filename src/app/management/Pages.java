@@ -10,6 +10,9 @@ public final class Pages {
     private boolean upgrades;
     private boolean seeDetails;
 
+    /**
+     * programme starts on Homepage Logged Out
+     */
     public Pages() {
        changePageHomepageLoggedOut();
        currentUserIdx = -1;

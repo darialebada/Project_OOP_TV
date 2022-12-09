@@ -13,9 +13,7 @@ public final class ContainsInput {
     public void setActors(final ArrayList<String> actors) {
         this.actors = actors;
     }
-
     public ArrayList<String> getGenre() {
         return genre;
     }
-
 }

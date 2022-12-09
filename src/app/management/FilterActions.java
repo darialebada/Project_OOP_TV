@@ -31,8 +31,8 @@ public final class FilterActions {
             } else {
                 /* sort after rating */
                 switch (filter.getSort().getRating()) {
-                    case "increasing" -> sortByRatingIncreasing(filter, filteredMovies);
-                    case "decreasing" -> sortByRatingDecreasing(filter, filteredMovies);
+                    case "increasing" -> sortByRatingIncreasing(filteredMovies);
+                    case "decreasing" -> sortByRatingDecreasing(filteredMovies);
                     default -> System.out.println("error\n");
                 }
             }
@@ -67,7 +67,7 @@ public final class FilterActions {
     }
 
     /**
-     * @return arraylist filtered after requested actors
+     * @return 1 if the movie contains requested actors
      */
     public int filterAfterActors(final ContainsInput contains, final Movie movie) {
         for (String name : contains.getActors()) {
@@ -79,7 +79,7 @@ public final class FilterActions {
     }
 
     /**
-     * @return arraylist filtered after requested genres
+     * @return 1 if the movie contains requested genres
      */
     public int filterAfterGenre(final ContainsInput contains, final Movie movie) {
         for (String genre : contains.getGenre()) {
@@ -159,8 +159,7 @@ public final class FilterActions {
     /**
      * sort after rating increasing
      */
-    public void sortByRatingIncreasing(final FilterInput filter,
-                                       final ArrayList<Movie> filteredMovies) {
+    public void sortByRatingIncreasing(final ArrayList<Movie> filteredMovies) {
         filteredMovies.sort((o1, o2) -> {
             if (o1.getRating() < o2.getRating()) {
                 return -1;
@@ -174,8 +173,7 @@ public final class FilterActions {
     /**
      * sort after rating decreasing
      */
-    public void sortByRatingDecreasing(final FilterInput filter,
-                                       final ArrayList<Movie> filteredMovies) {
+    public void sortByRatingDecreasing(final ArrayList<Movie> filteredMovies) {
         filteredMovies.sort((o1, o2) -> {
             if (o1.getRating() > o2.getRating()) {
                 return -1;

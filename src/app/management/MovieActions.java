@@ -12,12 +12,12 @@ import utils.Errors;
 import java.util.ArrayList;
 
 public class MovieActions {
-    private ArrayList<User> users;
-    private ArrayList<Movie> movies;
-    private Pages page;
-    private String currentMovieOnPage;
-    private ArrayList<Movie> filteredMovieList;
-    private Errors err = Errors.getErrorsInstance();
+    private final ArrayList<User> users;
+    private final ArrayList<Movie> movies;
+    private final Pages page;
+    private final String currentMovieOnPage;
+    private final ArrayList<Movie> filteredMovieList;
+    private final Errors err = Errors.getErrorsInstance();
     public MovieActions(final Pages page, final ArrayList<Movie> movies,
                         final ArrayList<User> users, final ArrayList<Movie> filteredMovieList,
                         final String currentMovieOnPage) {
@@ -102,7 +102,7 @@ public class MovieActions {
         int numFreePremiumMovies = users.get(page.getCurrentUserIdx()).
                 getNumFreePremiumMovies();
 
-        boolean freePremiumMovies = getPurchaseType(numTokens, numFreePremiumMovies);
+        boolean freePremiumMovies = getPurchaseType(numFreePremiumMovies);
 
         if (!(users.get(page.getCurrentUserIdx()).getCredentials().getAccountType().
                 equals("premium") && numFreePremiumMovies > 0)) {
@@ -132,17 +132,12 @@ public class MovieActions {
     }
 
     /**
-     * @param numTokens = number of tokens for current user
      * @param numFreePremiumMovies = number of free premium movies
      * @return true if there are free premium movies available
      */
-    public boolean getPurchaseType(final int numTokens,
-                                  final int numFreePremiumMovies) {
-        if (numFreePremiumMovies > 0 && users.get(page.getCurrentUserIdx()).
-                getCredentials().getAccountType().equals("premium")) {
-            return true;
-        }
-        return false;
+    public boolean getPurchaseType(final int numFreePremiumMovies) {
+        return numFreePremiumMovies > 0 && users.get(page.getCurrentUserIdx()).
+                getCredentials().getAccountType().equals("premium");
     }
 
     /**

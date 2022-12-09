@@ -16,7 +16,7 @@ public final class Movie {
     private double rating;
     private int numRatings;
     @JsonIgnore
-    private ArrayList<Double> ratingsList;
+    private final ArrayList<Double> ratingsList;
 
     public Movie() {
         numLikes = 0;

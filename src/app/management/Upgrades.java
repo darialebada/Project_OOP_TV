@@ -9,9 +9,9 @@ import utils.Errors;
 import java.util.ArrayList;
 
 public final class Upgrades {
-    private ArrayList<User> users;
-    private Pages page;
-    private Errors err = Errors.getErrorsInstance();
+    private final ArrayList<User> users;
+    private final Pages page;
+    private final Errors err = Errors.getErrorsInstance();
 
     public Upgrades(final ArrayList<User> users, final Pages page) {
         this.users = users;

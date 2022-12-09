@@ -15,6 +15,11 @@ public final class Errors {
     private final ArrayList<Movie> currentMovieList = new ArrayList<>();
     private Errors() {
     }
+
+    /**
+     * static method to create instance of Singleton
+     * Lazy initialization - object is created only if it is needed
+     */
     public static Errors getErrorsInstance() {
         if (errorsInstance == null) {
             errorsInstance = new Errors();

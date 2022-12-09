@@ -26,24 +26,26 @@ public final class Main {
     }
 
     /**
-     * @param filePath1 - path to input file
-     * @param filePath2 - path to output file
+     * @param inputFilePath - path to input file
+     * @param outputFilePath - path to output file
      * @throws IOException in case of exceptions to reading / writing
      */
-    public static void action(final String filePath1,
-                              final String filePath2) throws IOException {
+    public static void action(final String inputFilePath,
+                              final String outputFilePath) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        Input inputData = objectMapper.readValue(new File(filePath1),
-                Input.class);
+        /* get data from input file */
+        Input inputData = objectMapper.readValue(new File(inputFilePath), Input.class);
 
         ArrayNode output = objectMapper.createArrayNode();
 
-        AppManager commands = new AppManager();
-        commands.debug(inputData.getUsers(), inputData.getMovies(),
+        /* actual start for my implementation */
+        AppManager appManager = new AppManager();
+        appManager.debug(inputData.getUsers(), inputData.getMovies(),
                 inputData.getActions(), output);
 
+        /* write output in JSON format in file */
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
-        objectWriter.writeValue(new File(filePath2), output);
+        objectWriter.writeValue(new File(outputFilePath), output);
     }
 }
