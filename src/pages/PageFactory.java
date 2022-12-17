@@ -1,7 +1,16 @@
 package pages;
 
-public class PageFactory {
-    public static Page createPage (String pageType) {
+public final  class PageFactory {
+    /**
+     * for coding style
+     */
+    private PageFactory() {
+    }
+    /**
+     * Factory design pattern for a page
+     * @return new page
+     */
+    public static Page createPage(final String pageType) {
         switch (pageType) {
             case "homeLoggedIn" -> {
                 return new HomeLoggedIn();

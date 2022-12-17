@@ -1,17 +1,20 @@
 package pages;
 
-public class Upgrade extends Page {
+public final class Upgrade extends Page {
+    /**
+     * set page type
+     */
     public Upgrade() {
         setType("upgrades");
     }
 
-    public boolean isNextPageCorrect(String pageType) {
-        if (pageType.equals("see details")
+    /**
+     * check if next page can be accessed
+     */
+    public boolean isNextPageCorrect(final String pageType) {
+        return pageType.equals("see details")
                 || pageType.equals("movies")
                 || pageType.equals("upgrades")
-                || pageType.equals("logout")) {
-            return true;
-        }
-        return false;
+                || pageType.equals("logout");
     }
 }

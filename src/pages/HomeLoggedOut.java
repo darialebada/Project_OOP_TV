@@ -1,15 +1,18 @@
 package pages;
 
-public class HomeLoggedOut extends Page {
+public final class HomeLoggedOut extends Page {
+    /**
+     * set page type
+     */
     public HomeLoggedOut() {
         setType("homeLoggedOut");
     }
 
-    public boolean isNextPageCorrect(String pageType) {
-        if (pageType.equals("login")
-            || pageType.equals("register")) {
-            return true;
-        }
-        return false;
+    /**
+     * check if next page can be accessed
+     */
+    public boolean isNextPageCorrect(final String pageType) {
+        return pageType.equals("login")
+                || pageType.equals("register");
     }
 }

@@ -1,14 +1,17 @@
 package pages;
 
-public class Login extends Page {
+public final class Login extends Page {
+    /**
+     * set page type
+     */
     public Login() {
         setType("login");
     }
 
-    public boolean isNextPageCorrect(String pageType) {
-        if (pageType.equals("register")) {
-            return true;
-        }
-        return false;
+    /**
+     * check if next page can be accessed
+     */
+    public boolean isNextPageCorrect(final String pageType) {
+        return pageType.equals("register");
     }
 }

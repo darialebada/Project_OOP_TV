@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.Movie;
 import fileio.User;
-import pages.Page;
 import utils.Constants;
 import utils.Errors;
 
@@ -15,17 +14,15 @@ import java.util.ArrayList;
 public class MovieActions {
     private final ArrayList<User> users;
     private final ArrayList<Movie> movies;
-    private final Page page;
     private final String currentMovieOnPage;
     private final ArrayList<Movie> filteredMovieList;
     private final int currentUserIdx;
     private final Errors err = Errors.getErrorsInstance();
-    public MovieActions(final Page page, final ArrayList<Movie> movies,
+    public MovieActions(final ArrayList<Movie> movies,
                         final ArrayList<User> users, final ArrayList<Movie> filteredMovieList,
                         final int currentUserIdx, final String currentMovieOnPage) {
         this.users = users;
         this.movies = movies;
-        this.page = page;
         this.filteredMovieList = filteredMovieList;
         this.currentMovieOnPage = currentMovieOnPage;
         this.currentUserIdx = currentUserIdx;

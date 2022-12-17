@@ -15,7 +15,7 @@ public final class AppManager {
     private ArrayList<User> users;
     private ArrayList<Movie> movies;
     private ArrayList<Movie> filteredMovieList = new ArrayList<>();
-    private ArrayList<Movie> currentMovieList = new ArrayList<>();
+    private final ArrayList<Movie> currentMovieList = new ArrayList<>();
     private String currentMovieOnPage;
     private int currentUserIdx;
     private final Errors err = Errors.getErrorsInstance();
@@ -40,7 +40,7 @@ public final class AppManager {
      * possible cases for changing the current page
      */
     public void changePage(final Action action, final ArrayNode output) {
-        MovieActions movieActions = new MovieActions(page, movies, users,
+        MovieActions movieActions = new MovieActions(movies, users,
                 filteredMovieList, currentUserIdx, currentMovieOnPage);
         switch (action.getPage()) {
             case "login" -> {
@@ -91,9 +91,9 @@ public final class AppManager {
      * possible cases for action performed on current page
      */
     public void onPage(final Action action, final ArrayNode output) {
-        MovieActions movieActions = new MovieActions(page, movies, users,
+        MovieActions movieActions = new MovieActions(movies, users,
                 filteredMovieList, currentUserIdx, currentMovieOnPage);
-        Upgrades upgrade = new Upgrades(users, page);
+        Upgrades upgrade = new Upgrades(users);
         switch (action.getFeature()) {
             case "login" -> {
                 if (page.getType().equals("login")) {

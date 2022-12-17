@@ -3,7 +3,6 @@ package management;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import fileio.Action;
 import fileio.User;
-import pages.Page;
 import utils.Constants;
 import utils.Errors;
 
@@ -11,12 +10,10 @@ import java.util.ArrayList;
 
 public final class Upgrades {
     private final ArrayList<User> users;
-    private final Page page;
     private final Errors err = Errors.getErrorsInstance();
 
-    public Upgrades(final ArrayList<User> users, final Page page) {
+    public Upgrades(final ArrayList<User> users) {
         this.users = users;
-        this.page = page;
     }
     /**
      * action for buying tokens

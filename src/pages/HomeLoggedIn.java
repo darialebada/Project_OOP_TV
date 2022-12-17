@@ -1,16 +1,20 @@
 package pages;
 
-public class HomeLoggedIn extends Page {
+public final class HomeLoggedIn extends Page {
+    /**
+     * set page type
+     */
     public HomeLoggedIn() {
         setType("homeLoggedIn");
     }
-    public boolean isNextPageCorrect(String pageType) {
-        if (pageType.equals("seeDetails")
-            || pageType.equals("movies")
-            || pageType.equals("upgrades")
-            || pageType.equals("logout")) {
-            return true;
-        }
-        return false;
+
+    /**
+     * check if next page can be accessed
+     */
+    public boolean isNextPageCorrect(final String pageType) {
+        return pageType.equals("seeDetails")
+                || pageType.equals("movies")
+                || pageType.equals("upgrades")
+                || pageType.equals("logout");
     }
 }

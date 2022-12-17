@@ -1,17 +1,20 @@
 package pages;
 
-public class Movies extends Page {
+public final class Movies extends Page {
+    /**
+     * set page type
+     */
     public Movies() {
         setType("movies");
     }
 
-    public boolean isNextPageCorrect(String pageType) {
-        if (pageType.equals("see details")
+    /**
+     * check if next page can be accessed
+     */
+    public boolean isNextPageCorrect(final String pageType) {
+        return pageType.equals("see details")
                 || pageType.equals("upgrades")
                 || pageType.equals("movies")
-                || pageType.equals("logout")) {
-            return true;
-        }
-        return false;
+                || pageType.equals("logout");
     }
 }
