@@ -11,15 +11,20 @@ ajutorul clasei Input datele de intrare se prelucrează în obiecte de tip User,
 - Checker (Test.java);
 - Teste de input & ref;
 - fileio -> pachet care conține clasele în care vor fi convertite datele de input;
-- management -> pachet care conține clasele care se ocupă de flow-ul proiectului și rularea comenzilor date de utilizator la input; aici
-se află clasa Pages care se ocupă de ”schimbarea paginilor” în aplicație;
+- management -> pachet care conține clasele care se ocupă de flow-ul proiectului și rularea comenzilor date de utilizator la input;
+- pages -> pachet care contine tipurile de pagini; aici se află clasa PageFactory care se ocupă de ”schimbarea paginilor” în aplicație;
 - utils -> pachet care conține clase ajutătoare: Constants (definește anumite constante numerice necesare în program) și Errors (afișează
-output-ul specific pentru cănd este întâmpinată o eroare -> clasă implementată Singleton care folosește lazy instantiation).
+output-ul specific pentru cănd este întâmpinată o eroare).
 
 ## Rularea programului propriu-zis
 Se creează un obiect de tip AppManager care are scopul de a prelucra comenzile primite de la input. Există 2 tipuri de acțiuni posibile, 
 ”on page” si ”change page” care vor fi apelate în funcție de cerere și permisiuni (acțiunile sunt parsate prin intermediul unor structuri de
 tip switch).
+
+## Design pattern-uri folosite
+- Singleton cu lazy instantiation -> clasa Errors;
+- Factory Method Pattern -> PageFactory creează pagina următoare necesară; fiecare clasă (Movie, Login, Register etc.) extinde clasa
+abstractă Page. 
 
 ## Descrierea anumitor funcții 
 Funcțiile purchaseMovie, watchMovie, likeMovie, rateMovie sunt în strânsă legătură, îndeplinirea fiecăreia dintre aceste funcții fiind
