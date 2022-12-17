@@ -12,7 +12,7 @@ public final class FilterActions {
      * sorts movie list by duration/ rating
      */
     public void filter(final MovieActions movieActions, final FilterInput filter,
-                       final ArrayNode output) {
+                       final ArrayNode output, final int currentUserIdx) {
         ArrayList<Movie> filteredMovies;
         if (filter.getContains() == null) {
             filteredMovies = movieActions.getNotBannedMovies();
@@ -36,9 +36,9 @@ public final class FilterActions {
                     default -> System.out.println("error\n");
                 }
             }
-            movieActions.printDetails(filteredMovies, output);
+            movieActions.printDetails(filteredMovies, output, currentUserIdx);
         } else if (filter.getContains() != null) {
-            movieActions.printDetails(filteredMovies, output);
+            movieActions.printDetails(filteredMovies, output, currentUserIdx);
         }
     }
 

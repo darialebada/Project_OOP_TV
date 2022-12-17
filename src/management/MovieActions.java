@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fileio.Movie;
 import fileio.User;
+import pages.Page;
 import utils.Constants;
 import utils.Errors;
 
@@ -14,18 +15,20 @@ import java.util.ArrayList;
 public class MovieActions {
     private final ArrayList<User> users;
     private final ArrayList<Movie> movies;
-    private final Pages page;
+    private final Page page;
     private final String currentMovieOnPage;
     private final ArrayList<Movie> filteredMovieList;
+    private final int currentUserIdx;
     private final Errors err = Errors.getErrorsInstance();
-    public MovieActions(final Pages page, final ArrayList<Movie> movies,
+    public MovieActions(final Page page, final ArrayList<Movie> movies,
                         final ArrayList<User> users, final ArrayList<Movie> filteredMovieList,
-                        final String currentMovieOnPage) {
+                        final int currentUserIdx, final String currentMovieOnPage) {
         this.users = users;
         this.movies = movies;
         this.page = page;
         this.filteredMovieList = filteredMovieList;
         this.currentMovieOnPage = currentMovieOnPage;
+        this.currentUserIdx = currentUserIdx;
     }
 
     /**
@@ -33,13 +36,14 @@ public class MovieActions {
      * @param movieList - movie list available for current user
      * @param output for output file
      */
-    public void printDetails(final ArrayList<Movie> movieList, final ArrayNode output) {
+    public void printDetails(final ArrayList<Movie> movieList, final ArrayNode output,
+                             final int currentUserIdx) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode node = objectMapper.createObjectNode();
         String error = null;
         node.put("error", error);
         node.set("currentMoviesList", objectMapper.convertValue(movieList, JsonNode.class));
-        node.set("currentUser", objectMapper.convertValue(users.get(page.getCurrentUserIdx()),
+        node.set("currentUser", objectMapper.convertValue(users.get(currentUserIdx),
                 JsonNode.class));
         output.add(node);
     }
@@ -50,7 +54,7 @@ public class MovieActions {
     public ArrayList<Movie> getNotBannedMovies() {
         ArrayList<Movie> movieList = new ArrayList<>();
         for (Movie movie : movies) {
-            if (!movie.getCountriesBanned().contains(users.get(page.getCurrentUserIdx()).
+            if (!movie.getCountriesBanned().contains(users.get(currentUserIdx).
                     getCredentials().getCountry())) {
                 movieList.add(movie);
             }
@@ -69,7 +73,7 @@ public class MovieActions {
             if (movie.getName().equals(movieName)) {
                 searchedMovies.add(movie);
                 currentMovie = movie.getName();
-                printDetails(searchedMovies, output);
+                printDetails(searchedMovies, output, currentUserIdx);
                 return currentMovie;
             }
         }
@@ -91,20 +95,20 @@ public class MovieActions {
                 searchMovieList.add(movie);
             }
         }
-        printDetails(searchMovieList, output);
+        printDetails(searchMovieList, output, currentUserIdx);
     }
 
     /**
      * purchase movie
      */
     public void purchaseMovie(final ArrayNode output) {
-        int numTokens = users.get(page.getCurrentUserIdx()).getTokensCount();
-        int numFreePremiumMovies = users.get(page.getCurrentUserIdx()).
+        int numTokens = users.get(currentUserIdx).getTokensCount();
+        int numFreePremiumMovies = users.get(currentUserIdx).
                 getNumFreePremiumMovies();
 
         boolean freePremiumMovies = getPurchaseType(numFreePremiumMovies);
 
-        if (!(users.get(page.getCurrentUserIdx()).getCredentials().getAccountType().
+        if (!(users.get(currentUserIdx).getCredentials().getAccountType().
                 equals("premium") && numFreePremiumMovies > 0)) {
             if (numTokens < Constants.MOVIE_PRICE) {
                 return;
@@ -116,15 +120,15 @@ public class MovieActions {
             if (movie.getName().equals(currentMovieOnPage)) {
                 ArrayList<Movie> mov = new ArrayList<>();
                 mov.add(movie);
-                users.get(page.getCurrentUserIdx()).getPurchasedMovies().add(movie);
+                users.get(currentUserIdx).getPurchasedMovies().add(movie);
                 if (freePremiumMovies) {
-                    users.get(page.getCurrentUserIdx()).
+                    users.get(currentUserIdx).
                             setNumFreePremiumMovies(numFreePremiumMovies - 1);
                 } else {
-                    users.get(page.getCurrentUserIdx()).
+                    users.get(currentUserIdx).
                             setTokensCount(numTokens - Constants.MOVIE_PRICE);
                 }
-                printDetails(mov, output);
+                printDetails(mov, output, currentUserIdx);
                 return;
             }
         }
@@ -136,7 +140,7 @@ public class MovieActions {
      * @return true if there are free premium movies available
      */
     public boolean getPurchaseType(final int numFreePremiumMovies) {
-        return numFreePremiumMovies > 0 && users.get(page.getCurrentUserIdx()).
+        return numFreePremiumMovies > 0 && users.get(currentUserIdx).
                 getCredentials().getAccountType().equals("premium");
     }
 
@@ -144,12 +148,12 @@ public class MovieActions {
      * watch movie
      */
     public void watchMovie(final ArrayNode output) {
-        for (Movie movie : users.get(page.getCurrentUserIdx()).getPurchasedMovies()) {
+        for (Movie movie : users.get(currentUserIdx).getPurchasedMovies()) {
             if (movie.getName().equals(currentMovieOnPage)) {
                 ArrayList<Movie> mov = new ArrayList<>();
                 mov.add(movie);
-                users.get(page.getCurrentUserIdx()).getWatchedMovies().add(movie);
-                printDetails(mov, output);
+                users.get(currentUserIdx).getWatchedMovies().add(movie);
+                printDetails(mov, output, currentUserIdx);
                 return;
             }
         }
@@ -160,13 +164,13 @@ public class MovieActions {
      * like movie
      */
     public void likeMovie(final ArrayNode output) {
-        for (Movie movie : users.get(page.getCurrentUserIdx()).getWatchedMovies()) {
+        for (Movie movie : users.get(currentUserIdx).getWatchedMovies()) {
             if (movie.getName().equals(currentMovieOnPage)) {
                 movie.setNumLikes(movie.getNumLikes() + 1);
                 ArrayList<Movie> mov = new ArrayList<>();
                 mov.add(movie);
-                users.get(page.getCurrentUserIdx()).getLikedMovies().add(movie);
-                printDetails(mov, output);
+                users.get(currentUserIdx).getLikedMovies().add(movie);
+                printDetails(mov, output, currentUserIdx);
                 return;
             }
         }
@@ -181,7 +185,7 @@ public class MovieActions {
             err.pageErr(output);
             return;
         }
-        for (Movie movie : users.get(page.getCurrentUserIdx()).getWatchedMovies()) {
+        for (Movie movie : users.get(currentUserIdx).getWatchedMovies()) {
             if (movie.getName().equals(currentMovieOnPage)) {
                 movie.setNumRatings(movie.getNumRatings() + 1);
                 movie.getRatingsList().add(rate);
@@ -192,8 +196,8 @@ public class MovieActions {
                 movie.setRating(sum);
                 ArrayList<Movie> mov = new ArrayList<>();
                 mov.add(movie);
-                users.get(page.getCurrentUserIdx()).getRatedMovies().add(movie);
-                printDetails(mov, output);
+                users.get(currentUserIdx).getRatedMovies().add(movie);
+                printDetails(mov, output, currentUserIdx);
                 return;
             }
         }

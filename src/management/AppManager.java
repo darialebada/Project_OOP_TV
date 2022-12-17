@@ -4,16 +4,20 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import fileio.Action;
 import fileio.Movie;
 import fileio.User;
+import pages.Page;
+import pages.PageFactory;
 import utils.Errors;
 
 import java.util.ArrayList;
 
 public final class AppManager {
-    private Pages page = new Pages();
+    private Page page = PageFactory.createPage("homeLoggedOut");
     private ArrayList<User> users;
     private ArrayList<Movie> movies;
     private ArrayList<Movie> filteredMovieList = new ArrayList<>();
+    private ArrayList<Movie> currentMovieList = new ArrayList<>();
     private String currentMovieOnPage;
+    private int currentUserIdx;
     private final Errors err = Errors.getErrorsInstance();
 
     /**
@@ -37,46 +41,44 @@ public final class AppManager {
      */
     public void changePage(final Action action, final ArrayNode output) {
         MovieActions movieActions = new MovieActions(page, movies, users,
-                filteredMovieList, currentMovieOnPage);
+                filteredMovieList, currentUserIdx, currentMovieOnPage);
         switch (action.getPage()) {
             case "login" -> {
-                if (page.isHomepageLoggedOut()) {
-                    page.changePageLogin();
+                if (page.isNextPageCorrect("login")) {
+                    page = PageFactory.createPage("login");
                     return;
                 }
             }
             case "register" -> {
-                if (page.isHomepageLoggedOut()) {
-                    page.changePageRegister();
+                if (page.isNextPageCorrect("register")) {
+                    page = PageFactory.createPage("register");
                     return;
                 }
             }
             case "logout" -> {
-                if (page.getCurrentUserIdx() > -1) {
-                    page.changePageHomepageLoggedOut();
+                if (page.isNextPageCorrect("logout")) {
+                    page = PageFactory.createPage("homeLoggedOut");
                     return;
                 }
             }
             case "movies" -> {
-                if (page.isHomepageLogged() || page.isUpgrades() || page.isSeeDetails()) {
-                    page.changePageMovies();
+                if (page.isNextPageCorrect("movies")) {
+                    page = PageFactory.createPage("movies");
                     filteredMovieList = movieActions.getNotBannedMovies();
-                    movieActions.printDetails(filteredMovieList, output);
+                    movieActions.printDetails(filteredMovieList, output, currentUserIdx);
                     return;
                 }
             }
             case "see details" -> {
-               if (page.isMovies() || page.isUpgrades()
-                       || page.isSeeDetails() || page.isHomepageLogged()) {
-                    page.changePageSeeDetails();
+               if (page.isNextPageCorrect("see details")) {
+                    page = PageFactory.createPage("see details");
                     currentMovieOnPage = movieActions.seeDetails(action.getMovie(), output);
                     return;
                }
             }
             case "upgrades" -> {
-                if (page.isMovies() || page.isUpgrades()
-                        || page.isSeeDetails() || page.isHomepageLogged()) {
-                    page.changePageUpgrades();
+                if (page.isNextPageCorrect("upgrades")) {
+                    page = PageFactory.createPage("upgrades");
                     return;
                 }
             }
@@ -90,32 +92,32 @@ public final class AppManager {
      */
     public void onPage(final Action action, final ArrayNode output) {
         MovieActions movieActions = new MovieActions(page, movies, users,
-                filteredMovieList, currentMovieOnPage);
+                filteredMovieList, currentUserIdx, currentMovieOnPage);
         Upgrades upgrade = new Upgrades(users, page);
-        UserActions userActions = new UserActions(users, page);
         switch (action.getFeature()) {
             case "login" -> {
-                if (page.isLogin()) {
-                    userActions.login(movieActions, action, output);
+                if (page.getType().equals("login")) {
+                    login(movieActions, action, output);
+                    //page.setCurrentUserIdx();
                     return;
                 }
             }
             case "register" -> {
-                if (page.isRegister()) {
-                    userActions.register(movieActions, action, output);
+                if (page.getType().equals("register")) {
+                    register(movieActions, action, output);
                     return;
                 }
             }
             case "search" -> {
-                if (page.isMovies()) {
+                if (page.getType().equals("movies")) {
                     movieActions.printSearchMovies(action.getStartsWith(), output);
                     return;
                 }
             }
             case "filter" -> {
-                if (page.isMovies() || page.isSeeDetails()) {
+                if (page.getType().equals("movies") || page.getType().equals("see details")) {
                     FilterActions filterActions = new FilterActions();
-                    filterActions.filter(movieActions, action.getFilters(), output);
+                    filterActions.filter(movieActions, action.getFilters(), output, currentUserIdx);
                     if (action.getFilters().getContains() != null) {
                         filteredMovieList = filterActions.
                                 getFilteredMovies(action.getFilters().getContains(), movieActions);
@@ -124,11 +126,11 @@ public final class AppManager {
                 }
             }
             case "buy tokens" -> {
-                upgrade.buyTokens(action, output);
+                upgrade.buyTokens(action, output, currentUserIdx);
                 return;
             }
             case "buy premium account" -> {
-                upgrade.buyPremiumAccount(output);
+                upgrade.buyPremiumAccount(output, currentUserIdx);
                 return;
             }
             case "purchase" -> {
@@ -152,11 +154,51 @@ public final class AppManager {
         err.pageErr(output);
     }
 
-    public Pages getPage() {
+    /**
+     * check if there is a valid user with given credentials
+     */
+    public void login(final MovieActions movieActions,
+                      final Action action, final ArrayNode output) {
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getCredentials().getName().equals(action.getCredentials().getName())
+                    && users.get(i).getCredentials().getPassword().equals(action.getCredentials().
+                    getPassword())) {
+                /* valid login credentials -> print current user's details */
+                page = PageFactory.createPage("homeLoggedIn");
+                currentUserIdx = i;
+                movieActions.printDetails(currentMovieList, output, currentUserIdx);
+                return;
+            }
+        }
+        page = PageFactory.createPage("homeLoggedOut");
+        err.pageErr(output);
+    }
+
+    /**
+     * register a new user (add it to userList)
+     */
+    public void register(final MovieActions movieActions,
+                         final Action action, final ArrayNode output) {
+        for (User user : users) {
+            if (user.getCredentials().getName().equals(action.getCredentials().getName())) {
+                page = PageFactory.createPage("homeLoggedOut");
+                err.pageErr(output);
+                return;
+            }
+        }
+        User newUser = new User(action.getCredentials());
+        users.add(newUser);
+        page = PageFactory.createPage("homeLoggedIn");
+        currentUserIdx = users.size() - 1;
+        /* print new user -> current user */
+        movieActions.printDetails(currentMovieList, output, currentUserIdx);
+    }
+
+    public Page getPage() {
         return page;
     }
 
-    public void setPage(final Pages page) {
+    public void setPage(final Page page) {
         this.page = page;
     }
 
