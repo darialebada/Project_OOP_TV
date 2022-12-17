@@ -1,6 +1,9 @@
 package pages;
 
-public final  class PageFactory {
+/**
+ * Factory Design Pattern
+ */
+public final class PageFactory {
     /**
      * for coding style
      */

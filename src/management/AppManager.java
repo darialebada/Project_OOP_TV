@@ -98,7 +98,6 @@ public final class AppManager {
             case "login" -> {
                 if (page.getType().equals("login")) {
                     login(movieActions, action, output);
-                    //page.setCurrentUserIdx();
                     return;
                 }
             }
