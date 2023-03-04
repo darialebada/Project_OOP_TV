@@ -1,6 +1,16 @@
 ### Lebădă Daria-Cristiana, 323CA ###
 # Proiect_OOP_TV #
 
+## Context
+Ne dorim implementarea unei platfome pentru vizualizarea de filme și seriale. Inițial ne gândim la câteva funcționalități standard, primele care ne vin în minte, pe care le vom propune noi după cum urmează: register, login, logout, search, view movie, rating, etc.
+
+## Execuția proiectului
+- Se încarcă datele citite din fișierul de test (ce este în format JSON), în obiecte;
+- Se vor oferi inițial: lista cu userii deja înregistrați pe platformă (aceasta va putea fi modificată doar prin operația de register explicată ulterior) și lista filmelor existente pe platformă. Bineînțeles, fiecare dintre acestea vor fi identificate după caracteristicile proprii;
+- Se primesc secvențial acțiuni („change page” sau „on page”) și se execută pe măsură ce sunt primite, rezultatul lor având efect asupra datelor din platformă la un anumit moment de timp;
+- După executarea unor acțiuni, se afișează rezultatul în fișierul JSON de ieșire;
+- La terminarea tuturor acțiunilor se termina și execuția programului și se trece la următorul set de teste.
+
 ## Încărcarea datelor din fișiere în obiecte
 Pentru încărcarea datelor în obiecte am folosit o metodă asemănătoare temei 1. Se iau numele fișierelor trimise ca argumente în main
 și se creează fișierul de output, apoi se apelează funcția action unde se creează un obiect objectMapper, se transformă datele de intrare
